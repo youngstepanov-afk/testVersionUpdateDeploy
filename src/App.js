@@ -18,7 +18,7 @@ function App() {
           Learn React
         </a>
         <p>
-          Test V.0.1
+          Test V.0.2
         </p>
       </header>
     </div>
