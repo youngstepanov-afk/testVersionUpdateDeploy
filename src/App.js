@@ -29,7 +29,7 @@ function App() {
     };
 
     checkForUpdates();
-    const interval = setInterval(checkForUpdates, 10 * 60 * 1000);
+    const interval = setInterval(checkForUpdates, 15_000);
     
     return () => clearInterval(interval);
   }, []);
