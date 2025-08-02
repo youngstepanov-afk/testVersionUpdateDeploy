@@ -50,7 +50,7 @@ function App() {
         >
           Learn React
         </a>
-        <p>Test V.0.3</p>
+        <p>Test V.0.4</p>
         {reloadWarning && (
           <div style={{ marginTop: '20px', color: 'yellow' }}>
             ⚠️ Внимание: страница перезагрузится через 15 секунд (новый деплой)
