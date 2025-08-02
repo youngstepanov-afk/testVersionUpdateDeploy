@@ -1,39 +1,38 @@
+import { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { useEffect, useState } from 'react';
+
+// Текущая версия (должна совпадать с version.json)
+const APP_VERSION = '0.1';
 
 function App() {
-  const [reloadWarning, setReloadWarning] = useState(false);
-
   useEffect(() => {
     const checkForUpdates = async () => {
       try {
-        // Загружаем текущую версию (кешированную)
-        const cachedResponse = await fetch('/version.json');
-        const cachedData = await cachedResponse.json();
-        const cachedVersion = cachedData.version;
-
-        // Загружаем свежую версию (с bypass кеша)
-        const freshResponse = await fetch('/version.json?t=' + Date.now());
-        const freshData = await freshResponse.json();
-        const freshVersion = freshData.version;
-
-        if (freshVersion !== cachedVersion) {
-          setReloadWarning(true);
-          alert(`Доступна новая версия (${freshVersion}). Перезагрузка через 15 сек.`);
-          setTimeout(() => {
+        // Запрос с параметром, чтобы избежать кеширования
+        const res = await fetch('/version.json?t=' + Date.now());
+        
+        if (!res.ok) throw new Error('Failed to fetch version');
+        
+        const { version } = await res.json();
+        
+        if (version !== APP_VERSION) {
+          const shouldReload = confirm(
+            `Доступна новая версия (${version}). Перезагрузить страницу?`
+          );
+          if (shouldReload) {
             window.location.reload(true); // Hard reload
-          }, 15000);
+          }
         }
-      } catch (error) {
-        console.error('Ошибка проверки версии:', error);
+      } catch (err) {
+        console.error('Ошибка проверки обновлений:', err);
       }
     };
 
-    // Проверяем каждые 60 секунд
-    const interval = setInterval(checkForUpdates, 60000);
-    checkForUpdates(); // Первая проверка сразу
-
+    // Проверяем при загрузке и каждые 10 минут
+    checkForUpdates();
+    const interval = setInterval(checkForUpdates, 10 * 60 * 1000);
+    
     return () => clearInterval(interval);
   }, []);
 
@@ -50,12 +49,7 @@ function App() {
         >
           Learn React
         </a>
-        <p>Test V.0.4</p>
-        {reloadWarning && (
-          <div style={{ marginTop: '20px', color: 'yellow' }}>
-            ⚠️ Внимание: страница перезагрузится через 15 секунд (новый деплой)
-          </div>
-        )}
+        <p>Version: {APP_VERSION}</p>
       </header>
     </div>
   );
