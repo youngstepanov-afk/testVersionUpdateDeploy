@@ -5,7 +5,7 @@ import './App.css';
 
 ReactModal.setAppElement('#root');
 
-const APP_VERSION = '0.8';
+const APP_VERSION = '0.9';
 
 function App() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
