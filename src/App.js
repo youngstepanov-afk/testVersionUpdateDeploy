@@ -5,12 +5,14 @@ import './App.css';
 
 ReactModal.setAppElement('#root');
 
-const APP_VERSION = '0.9';
+const APP_VERSION = `0.1 + ${Date.now()}`;
 
 function App() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [newVersion, setNewVersion] = useState('');
 
+  console.log(APP_VERSION, newVersion)
+  
   useEffect(() => {
     const checkForUpdates = async () => {
       try {
