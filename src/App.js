@@ -28,7 +28,7 @@ function App() {
         console.error('Ошибка проверки обновлений:', err);
       }
     };
-
+    // dsad
     checkForUpdates();
     
     const interval = setInterval(checkForUpdates, 15_000);
