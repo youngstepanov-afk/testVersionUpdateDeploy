@@ -5,14 +5,11 @@ import './App.css';
 
 ReactModal.setAppElement('#root');
 
-const APP_VERSION = `0.1 + ${Date.now()}`;
+const VERSION_STORAGE_KEY = 'app_version';
 
 function App() {
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [newVersion, setNewVersion] = useState('');
+  const [version, setVersion] = useState('');
 
-  console.log(APP_VERSION, newVersion)
-  
   useEffect(() => {
     const checkForUpdates = async () => {
       try {
@@ -20,10 +17,12 @@ function App() {
         if (!res.ok) throw new Error('Failed to fetch version');
         
         const { version } = await res.json();
+        setVersion(version);
+        const savedVersion = localStorage.getItem(VERSION_STORAGE_KEY);
         
-        if (version !== APP_VERSION) {
-          setNewVersion(version);
-          setShowUpdateModal(true);
+        if (version !== savedVersion) {
+          localStorage.setItem(VERSION_STORAGE_KEY, version);
+          window.location.reload();
         }
       } catch (err) {
         console.error('Ошибка проверки обновлений:', err);
@@ -31,6 +30,7 @@ function App() {
     };
 
     checkForUpdates();
+    
     const interval = setInterval(checkForUpdates, 15_000);
     
     return () => clearInterval(interval);
@@ -40,36 +40,9 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>Version: {APP_VERSION}</p>
+        <p>Версия приложения: {version}</p>
+        <p>Сохранённая версия: {localStorage.getItem(VERSION_STORAGE_KEY)}</p>
       </header>
-
-      <ReactModal
-        isOpen={showUpdateModal}
-        onRequestClose={() => setShowUpdateModal(false)}
-        contentLabel="Update Available"
-        style={{
-          content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            maxWidth: '400px'
-          }
-        }}
-      >
-        <h3>Доступно обновление!</h3>
-        <p>Новая версия: {newVersion}</p>
-        <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <button onClick={() => window.location.reload(true)}>
-            Обновить сейчас
-          </button>
-          <button onClick={() => setShowUpdateModal(false)}>
-            Позже
-          </button>
-        </div>
-      </ReactModal>
     </div>
   );
 }
